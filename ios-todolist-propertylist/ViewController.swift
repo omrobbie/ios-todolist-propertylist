@@ -11,6 +11,7 @@ import UIKit
 struct Item: Encodable, Decodable {
 
     let title: String
+    var status: Bool
 }
 
 class ViewController: UIViewController {
@@ -59,7 +60,7 @@ class ViewController: UIViewController {
         let alertVC = UIAlertController(title: "Add new item", message: "", preferredStyle: .alert)
         let actionCancel = UIAlertAction(title: "Cancel", style: .cancel)
         let actionAdd = UIAlertAction(title: "Add", style: .default) { (_) in
-            self.items.append(Item(title: textField.text!))
+            self.items.append(Item(title: textField.text!, status: false))
             self.tableView.reloadData()
             self.saveData(self.items)
         }
@@ -86,7 +87,14 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")!
         let item = items[indexPath.row]
         cell.textLabel?.text = item.title
+        cell.accessoryType = item.status ? .checkmark : .none
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        items[indexPath.row].status = !items[indexPath.row].status
+        tableView.reloadData()
+        saveData(items)
     }
 
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
