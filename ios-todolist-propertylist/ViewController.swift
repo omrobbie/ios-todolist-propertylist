@@ -8,7 +8,7 @@
 
 import UIKit
 
-struct Item: Encodable {
+struct Item: Encodable, Decodable {
 
     let title: String
 }
@@ -23,6 +23,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupList()
+        loadData()
     }
 
     private func setupList() {
@@ -35,6 +36,17 @@ class ViewController: UIViewController {
         do {
             let data = try PropertyListEncoder().encode(value)
             try data.write(to: self.dataFilePath)
+        } catch {
+            print(error.localizedDescription)
+            return
+        }
+    }
+
+    private func loadData() {
+        guard let data = try? Data(contentsOf: dataFilePath) else {return}
+
+        do {
+            items = try PropertyListDecoder().decode([Item].self, from: data)
         } catch {
             print(error.localizedDescription)
             return
