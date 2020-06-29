@@ -88,4 +88,12 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         cell.textLabel?.text = item.title
         return cell
     }
+
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            items.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+            saveData(items)
+        }
+    }
 }
